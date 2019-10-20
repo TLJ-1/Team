@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>多层神经网络——解决非线性问题</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1><a id="71_0"></a>7.1线性问题与非线性问题</h1>
+<h2><a id="1_2"></a>1.生成样本集</h2>
+<h2><a id="21000_3"></a>2.生成1000个数据并且显示在图中</h2>
+<p>1.<a href="https://blog.csdn.net/u013634684/article/details/49646311">plt.scatter的用法说明：点的表示符号、颜色、X轴、Y轴的标识等等</a><br>
+2.<a href="https://blog.csdn.net/abc13526222160/article/details/86423754">np.random.randn()</a><br>
+2.1<a href="https://blog.csdn.net/m0_37393514/article/details/81455915">np.random.randn()</a><br>
+3.<a href="https://blog.csdn.net/m0_37393514/article/details/81455915">np.eye()   :将数据转换成数组，也可使one_hot类型</a></p>
+<pre><code class="prism language-python">aa<span class="token operator">=</span><span class="token punctuation">[</span>np<span class="token punctuation">.</span>argmax<span class="token punctuation">(</span>l<span class="token punctuation">)</span> <span class="token keyword">for</span> l <span class="token keyword">in</span> train_Y
+colors<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'r'</span> <span class="token keyword">if</span> l<span class="token operator">==</span><span class="token number">0</span> <span class="token keyword">else</span> <span class="token string">'b'</span> <span class="token keyword">if</span> l<span class="token operator">==</span><span class="token number">1</span> <span class="token keyword">else</span> <span class="token string">'y'</span><span class="token keyword">for</span> l <span class="token keyword">in</span> aa<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">]</span><span class="token punctuation">]</span>
+</code></pre>
+<p>tf,argmax(array,axis)<br>
+如果axis=0，那么返回的是每一行的最大值的的下标<br>
+如果axis=1，返回的是每一列的最大值的下标</p>
+<h2><a id="_17"></a>思路</h2>
+<p>1.生成样本集（使用自定义的期待生成的数据特征：方差、均值等等）：病人数据<br>
+(并加以显示）</p>
+<pre><code class="prism language-python"><span class="token keyword">def</span> <span class="token function">generate</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+</code></pre>
+<p>2.构建网络结构<br>
+(占位符placeholder、w、b;交叉熵；损失函数、优化器…)</p>
+<pre><code class="prism language-python">tf<span class="token punctuation">.</span>Variable<span class="token punctuation">(</span>tf<span class="token punctuation">.</span>random_normal<span class="token punctuation">(</span><span class="token punctuation">[</span>input_dim<span class="token punctuation">,</span>lab_dim<span class="token punctuation">)</span><span class="token punctuation">,</span>name<span class="token operator">=</span><span class="token string">"weight"</span><span class="token punctuation">)</span>
+tf<span class="token punctuation">.</span>Variable<span class="token punctuation">(</span>tf<span class="token punctuation">.</span>zeros<span class="token punctuation">(</span><span class="token punctuation">[</span>lab_dim<span class="token punctuation">]</span><span class="token punctuation">,</span>name<span class="token operator">=</span><span class="token string">"bias"</span><span class="token punctuation">)</span>
+</code></pre>
+<p>3.设置参数进行训练<br>
+当数据集较多时，一般分批次进行训练<br>
+写入机制</p>
+<pre><code class="prism language-python"><span class="token keyword">with</span> tf<span class="token punctuation">.</span>Session<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">as</span> sess<span class="token punctuation">:</span>
+
+</code></pre>
+<p>4.测试/数据可视化</p>
+<h2><a id="_44"></a>多分类与单分类的区别</h2>
+<p>1.(<code>generate(num,classes,[[3.0],[3.0,3.0]],regression)</code><br>
+类classes的个数变为设想数；自主生成的数据集的距离变为多个</p>
+<h1><a id="72_48"></a>7.2用隐藏层解决非线性问题</h1>
+<p>==1.什么是隐藏层   ==    <a href="https://blog.csdn.net/sghgcn/article/details/1726709">隐藏层的介绍</a><br>
+<mark>除了输入层和输出层的其他层!</mark></p>
+<p>隐藏层和OP的区别是？<br>
+<img src="https://img-blog.csdnimg.cn/20191019103700235.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzMTYxNzkz,size_16,color_FFFFFF,t_70" alt="在这里隐藏层插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20191019104055643.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzMTYxNzkz,size_16,color_FFFFFF,t_70" alt="op"><br>
+<mark>2。函数中迷惑的地方</mark><br>
+2.1.1</p>
+<pre><code class="prism language-python">n_input<span class="token operator">=</span><span class="token number">2</span>   <span class="token comment">#输入层节点数</span>
+n_label<span class="token operator">=</span><span class="token number">1</span>
+n_hidden<span class="token operator">=</span><span class="token number">2</span> <span class="token comment">#隐藏层节点个数</span>
+</code></pre>
+<p>节点是<br>
+输入层定义两个节点<br>
+隐藏层节点数定义为2</p>
+<p>2.1.2<mark>怎么确认loss函数里面的表达式？</mark></p>
+<pre><code class="prism language-python">loss<span class="token operator">=</span>tf<span class="token punctuation">.</span>reduce_mean<span class="token punctuation">(</span><span class="token punctuation">(</span>y_pred<span class="token operator">-</span>y<span class="token operator">**</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">)</span>  
+</code></pre>
+<p><img src="https://img-blog.csdnimg.cn/20191019142505273.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzMTYxNzkz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+由逻辑门组成的异或门，</p>
+<h1><a id="73_78"></a>7.3利用全连接网络将图片分类</h1>
+<p><a href="https://blog.csdn.net/weixin_43076706/article/details/82936061">	全连接层的介绍</a></p>
+<h1><a id="_81"></a>全连接网络中的优化技巧</h1>
+<p>什么是过拟合：</p>
+</div>
+</body>
+
+</html>
